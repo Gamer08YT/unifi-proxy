@@ -1,23 +1,25 @@
 package de.bytestore.unifi.provider;
 
-import com.github.manevolent.ffmpeg4j.FFmpegException;
 import org.bytedeco.javacv.*;
 import org.bytedeco.javacv.Frame;
 
-import javax.swing.text.DateFormatter;
 import java.awt.*;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class RTSPCam extends CamProvider {
-    public static void main(String[] args) throws IOException, FFmpegException {
+    // Store CamAI via OpenCV.
+    private static CamAI camAI = new CamAI();
 
-        FFmpegLogCallback.set();
+    public static void main(String[] args) throws IOException {
+        // Load OpenCV and Initialize.
+        CamAI.load();
+
+        //FFmpegLogCallback.set();
 
         // Create new Grabber Instance.
-        FFmpegFrameGrabber grabberIO = new FFmpegFrameGrabber("rtsp://192.168.1.144:554/11");
+        FFmpegFrameGrabber grabberIO = new FFmpegFrameGrabber("https://s3.amazonaws.com/x265.org/video/Tears_400_x264.mp4");
 
         // Set Transportation of Grabber (Bad Image Fix).
         grabberIO.setOption("rtsp_transport", "tcp");
@@ -38,11 +40,8 @@ public class RTSPCam extends CamProvider {
         // Start Grabber with getting Stream Info.
         grabberIO.start(true);
 
-        // Set Timestamp of Frame.
-        grabberIO.setTimestamp(new Date().getTime(), true);
-
         // Grab Frame for the first Time.
-        Frame frameIO = grabberIO.grab();
+        Frame frameIO = grabberIO.grabImage();
 
         // Show Canvas for Debugging.
         CanvasFrame canvasIO = new CanvasFrame("Camera");
@@ -53,10 +52,13 @@ public class RTSPCam extends CamProvider {
         // Grab Frames of RTSP.
         while (frameIO != null) {
             // Grap next Frame of Stream.
-            frameIO = grabberIO.grab();
+            frameIO = grabberIO.grabImage();
+
+            // Parse Buffer from Frame.
+            Image imageIO = camAI.parseBuffer(frameIO);
 
             // Show Frame on Debug Canvas.
-            canvasIO.showImage(frameIO);
+            canvasIO.showImage(imageIO);
 
             // Display some Debugging Options in the Title.
             canvasIO.setTitle("Camera | " + grabberIO.getFrameRate() + " FPS | " + formatIO.format(grabberIO.getTimestamp()));

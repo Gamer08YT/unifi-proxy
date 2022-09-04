@@ -40,6 +40,7 @@
             <artifactId>nv-websocket-client</artifactId>
             <version>2.14</version>
         </dependency>
+        <!-- FFMPEG for De/Encoding Stream -->
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv-platform</artifactId>
@@ -50,11 +51,11 @@
             <artifactId>ffmpeg-platform</artifactId>
             <version>5.0-1.5.7</version>
         </dependency>
-        <!-- FFMPEG for De/Encoding Stream -->
+        <!-- OpenSV for Smart Detections -->
         <dependency>
-            <groupId>com.github.manevolent</groupId>
-            <artifactId>ffmpeg4j</artifactId>
-            <version>4.1-1.4.4-2</version>
+            <groupId>org.openpnp</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.5.1-2</version>
         </dependency>
     </dependencies>
 
