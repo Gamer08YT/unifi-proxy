@@ -1,4 +1,4 @@
-package de.bytestore.unifi.provider;
+package de.bytestore.unifi.provider.objects;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -22,7 +22,7 @@ public class CamFeatures {
 
         // Create new Array for Motion Mode and add Default Mode.
         JsonArray motionIO = new JsonArray();
-        motionIO.add("enhancedt");
+        motionIO.add("enhanced");
 
         // Add Motion Mode.
         featuresIO.add("motionDetect", motionIO);

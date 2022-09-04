@@ -1,7 +1,10 @@
 package de.bytestore.unifi.protect.socket;
 
 import com.neovisionaries.ws.client.WebSocketException;
+import com.neovisionaries.ws.client.WebSocketExtension;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import de.bytestore.unifi.protect.paket.AdoptionPaket;
+import de.bytestore.unifi.protect.paket.ProtectPaket;
 import de.bytestore.unifi.protect.tls.ProtectSSLContext;
 import de.bytestore.unifi.provider.CamProvider;
 import de.bytestore.unifi.utils.LogHandler;
@@ -35,6 +38,9 @@ public class ProtectSocket {
 
             // Disable Hostname Verification.
             factoryIO.setVerifyHostname(false);
+
+            // Set Serverhostname.
+            //factoryIO.setServerName("192.168.1.7");
 
             // Store URL of API.
             String apiIO = urlIO + "?token=" + providerIO.getToken();

@@ -9,7 +9,7 @@ import java.net.URISyntaxException;
 
 public class UniFi {
     public static void main(String[] args) {
-        String tokenIO = "mTNGpLso1xZYBH3dvlq0LvR93dnf1zv0";
+        String tokenIO = "GBXbjFgh3Ff05byGi1ChXBJh5ixYrim2";
         CamProvider providerIO = new CamProvider();
         providerIO.setToken(tokenIO);
 

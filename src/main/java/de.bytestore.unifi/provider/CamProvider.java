@@ -3,6 +3,7 @@ package de.bytestore.unifi.provider;
 import com.google.gson.JsonObject;
 import com.neovisionaries.ws.client.WebSocket;
 import de.bytestore.unifi.protect.paket.ProtectPaket;
+import de.bytestore.unifi.provider.objects.CamFeatures;
 import de.bytestore.unifi.utils.LogHandler;
 import de.bytestore.unifi.utils.LogType;
 
@@ -13,16 +14,19 @@ public class CamProvider implements CamProviderInterface {
     private String tokenIO;
 
     // Store Firmware Version of Camera.
-    private String firmwareIO = "0.2.0";
+    private String firmwareIO = "UVC.S2L.v4.55.5.67.M_c4d31c0.220704.1434";
 
     // Store Connection Host.
     private String hostIO = "192.168.1.110";
+
+    // Store IP Address of Camera.
+    private String ipIO = "192.168.1.20";
 
     // Store Connection Port (TLS).
     private int portIO = 7442;
 
     // Store Mac Address.
-    private String macIO = "AA:BB:CC:DD:EE:DD";
+    private String macIO = "AABBCCDDEEFF";
 
     // Store Camera Model.
     private CamType modelIO = CamType.UVC_G3_FLEX;
@@ -40,7 +44,7 @@ public class CamProvider implements CamProviderInterface {
     private com.neovisionaries.ws.client.WebSocket websocketIO = null;
 
     // Store last Message ID.
-    private int idIO = 0;
+    private int idIO = 1;
 
 
     @Override
@@ -55,6 +59,10 @@ public class CamProvider implements CamProviderInterface {
 
     public String getHost() {
         return hostIO;
+    }
+
+    public String getIP() {
+        return ipIO;
     }
 
     public int getPort() {
@@ -105,6 +113,10 @@ public class CamProvider implements CamProviderInterface {
         this.sendPayload(paketIO.getChannel(), idIO, paketIO.getData());
     }
 
+    public void sendPayload(String nameIO, JsonObject paketIO, int idIO) {
+        this.sendPayload(nameIO, idIO, paketIO);
+    }
+
 
     public void sendPayload(String nameIO, int responseIO, JsonObject payloadIO) {
         // Create new JsonObject for Paket.
@@ -114,13 +126,17 @@ public class CamProvider implements CamProviderInterface {
         paketIO.addProperty("from", "ubnt_avclient");
         paketIO.addProperty("functionName", nameIO);
         paketIO.addProperty("inResponseTo", responseIO);
-        paketIO.addProperty("messageId", this.generateID());
+        paketIO.addProperty("messageId", this.idIO);
         paketIO.add("payload", payloadIO);
         paketIO.addProperty("responseExpected", false);
         paketIO.addProperty("to", "UniFiVideo");
 
         // Print Debug Message.
-        LogHandler.print(LogType.SOCKET, "Preparing Channel '" + nameIO + "' for sending to UniFi Controller. (" + this.idIO + ")");
+        LogHandler.print(LogType.SOCKET, "Preparing Channel '" + nameIO + "' for sending to UniFi Controller. (" + this.idIO + ":" + responseIO + ")");
+
+        // Increment ID.
+        this.generateID();
+        System.out.println(paketIO.toString());
 
         // Write Paket to UniFi Protect.
         this.websocketIO.sendText(paketIO.toString());

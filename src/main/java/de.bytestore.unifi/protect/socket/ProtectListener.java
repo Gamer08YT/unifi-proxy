@@ -8,9 +8,8 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
 import de.bytestore.unifi.protect.paket.AdoptionPaket;
 import de.bytestore.unifi.protect.paket.AuthPaket;
+import de.bytestore.unifi.protect.paket.NetworkPaket;
 import de.bytestore.unifi.protect.paket.ParamAgreementPaket;
-import de.bytestore.unifi.protect.paket.ProtectPaket;
-import de.bytestore.unifi.protect.server.ProtectServer;
 import de.bytestore.unifi.provider.CamProvider;
 import de.bytestore.unifi.utils.LogHandler;
 import de.bytestore.unifi.utils.LogType;
@@ -33,15 +32,15 @@ public class ProtectListener extends WebSocketAdapter {
         LogHandler.print(LogType.SUCCESS, "Connected to Protect WS Server");
 
         // Send Adoption Paket (if not Adopted).
-        ProtectPaket paketIO = new AdoptionPaket(this.providerIO.getToken());
-        this.providerIO.sendPayload(paketIO);
+        this.providerIO.sendPayload(new AdoptionPaket(this.providerIO.getToken(), this.providerIO));
 
         // Print Debug Message.
         LogHandler.print(LogType.INFO, "Adoption to Protect with Token '" + this.providerIO.getToken() + "' and Mac '" + this.providerIO.getMac() + "'.");
     }
 
+
     @Override
-    public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+    public void onDisconnected(WebSocket websocketIO, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
         // Print Debug Message.
         LogHandler.print(LogType.WARNING, "Disconnected from Protect WS Server.");
     }
@@ -91,6 +90,12 @@ public class ProtectListener extends WebSocketAdapter {
                     LogHandler.print(LogType.SERVER, "UniFi Controller send Client Auth.");
 
                     this.providerIO.sendPayload(new AuthPaket(payloadIO), messageIO);
+                    break;
+                case "NetworkStatus":
+                    this.providerIO.sendPayload(new NetworkPaket(2, this.providerIO), messageIO);
+                    break;
+                case "ChangeVideoSettings":
+                    this.providerIO.sendPayload("ChangeVideoSettings", payloadIO, messageIO);
                     break;
                 default:
                     LogHandler.print(LogType.SERVER, "Function Handler for '" + functionIO + "' is not implemented.");
