@@ -1,4 +1,4 @@
-package de.bytestore.unifi.protect;
+package de.bytestore.unifi.protect.paket;
 
 import com.google.gson.JsonObject;
 import org.bytedeco.opencv.presets.opencv_core;

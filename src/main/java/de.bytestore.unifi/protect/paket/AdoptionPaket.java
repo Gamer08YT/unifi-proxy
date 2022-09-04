@@ -1,4 +1,4 @@
-package de.bytestore.unifi.protect;
+package de.bytestore.unifi.protect.paket;
 
 import com.google.gson.JsonObject;
 import de.bytestore.unifi.provider.CamProvider;
@@ -15,7 +15,7 @@ public class AdoptionPaket extends ProtectPaket {
         JsonObject objectIO = new JsonObject();
 
         objectIO.addProperty("adoptionCode", tokenIO);
-        objectIO.addProperty("connectionHost", this.providerIO.getHost());
+        objectIO.addProperty("connectionHost", "192.168.1.110");
         objectIO.addProperty("connectionSecurePort", this.providerIO.getPort());
         objectIO.addProperty("fwVersion", this.providerIO.getFirmware());
         objectIO.addProperty("hwrev", 19);

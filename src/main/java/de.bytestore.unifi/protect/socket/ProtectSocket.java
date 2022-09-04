@@ -1,13 +1,11 @@
-package de.bytestore.unifi.protect;
+package de.bytestore.unifi.protect.socket;
 
-import com.google.gson.JsonObject;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import de.bytestore.unifi.protect.tls.ProtectSSLContext;
 import de.bytestore.unifi.provider.CamProvider;
-import de.bytestore.unifi.secure.TrustManagerDummy;
 import de.bytestore.unifi.utils.LogHandler;
 import de.bytestore.unifi.utils.LogType;
-import org.bytedeco.opencv.presets.opencv_core;
 
 import javax.net.ssl.*;
 import java.io.IOException;
@@ -29,26 +27,8 @@ public class ProtectSocket {
             // Create new WebSocketFactory.
             WebSocketFactory factoryIO = new WebSocketFactory();
 
-            // Get Context Defaults from System JRE.
-            SSLContext contextIO = SSLContext.getInstance("TLSv1.3");
-
-            // Create new KeyManagerFactory.
-            KeyManagerFactory managerIO = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-
-            // Init new KeyStore Instance.
-            KeyStore storeIO = KeyStore.getInstance(KeyStore.getDefaultType());
-
-            // Load KeyStore from File.
-            storeIO.load(this.getClass().getClassLoader().getResourceAsStream("client.jks"), "".toCharArray());
-
-            // Init KeyManagerFactory
-            managerIO.init(storeIO, "".toCharArray());
-
-            // Init new Dummy Trust Manager.
-            contextIO.init(managerIO.getKeyManagers(), new TrustManagerDummy[]{new TrustManagerDummy()}, SecureRandom.getInstanceStrong());
-
-            // Print Debug Message.
-            LogHandler.print(LogType.SUCCESS, "Init new TrustManagerDummy for ignoring wrong Certs.");
+            // Load SSLContext via KeyStores.
+            SSLContext contextIO = new ProtectSSLContext().ProtectContext();
 
             // Set SSLContext to WebSocketFactory.
             factoryIO.setSSLSocketFactory(contextIO.getSocketFactory());

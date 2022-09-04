@@ -1,13 +1,18 @@
 # UniFi Proxy
+
 UniFi Proxy makes it possible to integrate third-party hardware into UniFi Protect.
 
-For testing purposes only, it is recommended to purchase hardware directly from the manufacturer and not to tamper with the system.
+For testing purposes only, it is recommended to purchase hardware directly from the manufacturer and not to tamper with
+the system.
 
 ### Generate new Adoption Token
-To adopt a device in UniFi Protect it is necessary to generate a token for it. This **token is only valid for 60 minutes** and is deleted even after a service restart.
+
+To adopt a device in UniFi Protect it is necessary to generate a token for it. This **token is only valid for 60
+minutes** and is deleted even after a service restart.
 
 1. Login into your local UniFi Controller (not unifi.ui.com).
-2. Open following URL ``https://unifi/proxy/protect/api/cameras/qr`` which shows an QR Code, if your Browser can't parse the DHCP Name you need to replace ``unifi`` with the Controllers IPv4 Address.
+2. Open following URL ``https://unifi/proxy/protect/api/cameras/qr`` which shows an QR Code, if your Browser can't parse
+   the DHCP Name you need to replace ``unifi`` with the Controllers IPv4 Address.
 3. Decode the QR Code with a [Decoder for QR Codes](https://qrcode-decoder.com/).
 4. Copy the Adoption Token out of the QR Code Payload.
 
@@ -26,6 +31,7 @@ Since there were some problems with the Keytool CLI in the past, we use the KeyS
 <img style="padding-left: 15px" src="src/main/resources/github/keystore-1.png" width="50%"/>
 
 3. Generate new Client Certificate:
+
 ```
 mkdir tmp
 openssl ecparam -out ./tmp/private.key -name prime256v1 -genkey -noout
@@ -33,6 +39,7 @@ openssl req -new -sha256 -key ./tmp/private.key -out ./tmp/server.csr -subj "/C=
 openssl x509 -req -sha256 -days 36500 -in ./tmp/server.csr -signkey ./tmp/private.key -out ./tmp/public.key
 cat ./tmp/private.key ./tmp/public.key > ./tmp/client.pem
 ```
+
 4. Import your Certificate into KeyStore as OpenSSL Keypair.
 
 <img style="padding-left: 15px" src="src/main/resources/github/keystore-2.png" width="50%"/>
@@ -45,11 +52,29 @@ cat ./tmp/private.key ./tmp/public.key > ./tmp/client.pem
 
 <img style="padding-left: 15px" src="src/main/resources/github/keystore-4.png" width="50%"/>
 
+### Adopting to Protect
+
+If a device does not appear immediately, **it may be that too many adoption requests have been sent**. In most cases, this can be fixed by restarting the Protect Service.
+
+
 ### Adding Recognition Templates
 
 **Experimental Feature (Hard CPU Usage)**
 
-Visit the Official GitHub Repository of OpenCV an look for predefined Templates under [opencv/data/haarcascades](https://github.com/opencv/opencv/tree/master/data/haarcascades).
+Visit the Official GitHub Repository of OpenCV an look for predefined Templates
+under [opencv/data/haarcascades](https://github.com/opencv/opencv/tree/master/data/haarcascades).
+
+### Debug your Controller
+
+To access your device you need to enable SSH on your Controller, sometimes you need to login as root to view all Directory's.
+
+- To find UniFi Protect Config: ``find / -name config.json``
+
+- To find UniFi Protect Logs: ``find / -name logs``
+
+#### For example, we want to debug the ``camera.avclient`` Log.
+
+In the current Controller Firmware Version we can use following Command: ``tail -f /srv/unifi-protect/logs/cameras.avclient.log``
 
 ### Find your Camera
 

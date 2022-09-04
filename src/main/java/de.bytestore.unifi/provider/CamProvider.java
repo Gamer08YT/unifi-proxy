@@ -1,9 +1,8 @@
 package de.bytestore.unifi.provider;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.neovisionaries.ws.client.WebSocket;
-import de.bytestore.unifi.protect.ProtectPaket;
+import de.bytestore.unifi.protect.paket.ProtectPaket;
 import de.bytestore.unifi.utils.LogHandler;
 import de.bytestore.unifi.utils.LogType;
 
@@ -14,22 +13,22 @@ public class CamProvider implements CamProviderInterface {
     private String tokenIO;
 
     // Store Firmware Version of Camera.
-    private String firmwareIO = "UVC.S2L.v4.23.8.67.0eba6e3.200526.1046";
+    private String firmwareIO = "0.2.0";
 
     // Store Connection Host.
-    private String hostIO = "192.168.1.7";
+    private String hostIO = "192.168.1.110";
 
     // Store Connection Port (TLS).
     private int portIO = 7442;
 
     // Store Mac Address.
-    private String macIO = "AABBCCDDEEFF";
+    private String macIO = "AA:BB:CC:DD:EE:DD";
 
     // Store Camera Model.
-    private CamType modelIO = CamType.UVC_G3_DOME;
+    private CamType modelIO = CamType.UVC_G3_FLEX;
 
     // Store Name of Camera.
-    private String nameIO = "Byte-Store.DE";
+    private String nameIO = "Unknown";
 
     // Store Timestamp for Uptime.
     Date dateIO = new Date();
@@ -121,7 +120,7 @@ public class CamProvider implements CamProviderInterface {
         paketIO.addProperty("to", "UniFiVideo");
 
         // Print Debug Message.
-        LogHandler.print(LogType.SOCKET, "Preparing Channel '" + nameIO + "' for sending to UniFi Controller.");
+        LogHandler.print(LogType.SOCKET, "Preparing Channel '" + nameIO + "' for sending to UniFi Controller. (" + this.idIO + ")");
 
         // Write Paket to UniFi Protect.
         this.websocketIO.sendText(paketIO.toString());

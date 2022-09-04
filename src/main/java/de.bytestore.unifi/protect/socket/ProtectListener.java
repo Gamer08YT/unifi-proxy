@@ -1,4 +1,4 @@
-package de.bytestore.unifi.protect;
+package de.bytestore.unifi.protect.socket;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -6,12 +6,15 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
+import de.bytestore.unifi.protect.paket.AdoptionPaket;
+import de.bytestore.unifi.protect.paket.AuthPaket;
+import de.bytestore.unifi.protect.paket.ParamAgreementPaket;
+import de.bytestore.unifi.protect.paket.ProtectPaket;
+import de.bytestore.unifi.protect.server.ProtectServer;
 import de.bytestore.unifi.provider.CamProvider;
 import de.bytestore.unifi.utils.LogHandler;
 import de.bytestore.unifi.utils.LogType;
-import org.bytedeco.opencv.presets.opencv_core;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +29,21 @@ public class ProtectListener extends WebSocketAdapter {
 
     @Override
     public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
+        // Print Debug Message.
+        LogHandler.print(LogType.SUCCESS, "Connected to Protect WS Server");
+
+        // Send Adoption Paket (if not Adopted).
         ProtectPaket paketIO = new AdoptionPaket(this.providerIO.getToken());
         this.providerIO.sendPayload(paketIO);
+
+        // Print Debug Message.
+        LogHandler.print(LogType.INFO, "Adoption to Protect with Token '" + this.providerIO.getToken() + "' and Mac '" + this.providerIO.getMac() + "'.");
     }
 
     @Override
     public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
-        super.onDisconnected(websocket, serverCloseFrame, clientCloseFrame, closedByServer);
+        // Print Debug Message.
+        LogHandler.print(LogType.WARNING, "Disconnected from Protect WS Server.");
     }
 
     @Override
@@ -56,6 +67,9 @@ public class ProtectListener extends WebSocketAdapter {
             // Get Function from Event.
             String functionIO = objectIO.get("functionName").getAsString();
 
+            // Get bool if Response Expected.
+            boolean expectedIO = (objectIO.has("responseExpected") ? objectIO.get("responseExpected").getAsBoolean() : false);
+
             // Get Message ID from Event.
             int messageIO = objectIO.get("messageId").getAsInt();
 
@@ -72,8 +86,15 @@ public class ProtectListener extends WebSocketAdapter {
                     // Sending ParamAgreement back to Server.
                     this.providerIO.sendPayload(new ParamAgreementPaket(this.providerIO.getToken(), this.providerIO.getFeatures()), messageIO);
                     break;
+                case "ubnt_avclient_auth":
+                    // Print Server Auth Response.
+                    LogHandler.print(LogType.SERVER, "UniFi Controller send Client Auth.");
+
+                    this.providerIO.sendPayload(new AuthPaket(payloadIO), messageIO);
+                    break;
                 default:
-                    System.out.println("Function Handler for '" + functionIO + "' is not implemented.");
+                    LogHandler.print(LogType.SERVER, "Function Handler for '" + functionIO + "' is not implemented.");
+                    LogHandler.print(LogType.INFO, "Payload: '" + payloadIO + "'");
                     break;
             }
 

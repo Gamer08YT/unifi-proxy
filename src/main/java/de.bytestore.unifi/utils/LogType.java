@@ -1,5 +1,5 @@
 package de.bytestore.unifi.utils;
 
 public enum LogType {
-    SOCKET, ERROR, INFO, SUCCESS, CAMERA, SERVER
+    SOCKET, ERROR, WARNING, INFO, SUCCESS, CAMERA, SERVER
 }
