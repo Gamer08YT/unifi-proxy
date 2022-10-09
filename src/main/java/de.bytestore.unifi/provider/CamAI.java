@@ -2,7 +2,6 @@ package de.bytestore.unifi.provider;
 
 import de.bytestore.unifi.utils.LogHandler;
 import de.bytestore.unifi.utils.LogType;
-import nu.pattern.OpenCV;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.opencv.core.*;
@@ -27,11 +26,11 @@ public class CamAI {
     private float sizeIO = 0.1f;
 
     public static void load() {
-        // Load OpenCV from Locally Location.
-        OpenCV.loadLocally();
+        // Load Native Library of OpenCV.
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
         // Print Debug Message.
-        LogHandler.print(LogType.SUCCESS, "Loaded OpenCV from Shared Location.");
+        LogHandler.print(LogType.SUCCESS, "Loaded OpenCV Native Library.");
     }
 
     /**

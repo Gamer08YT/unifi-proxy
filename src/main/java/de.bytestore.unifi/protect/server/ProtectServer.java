@@ -1,6 +1,7 @@
 package de.bytestore.unifi.protect.server;
 
 import com.sun.net.httpserver.HttpsServer;
+import de.bytestore.unifi.protect.server.routes.InfoRoute;
 import de.bytestore.unifi.protect.tls.ProtectSSLContext;
 import de.bytestore.unifi.utils.LogHandler;
 import de.bytestore.unifi.utils.LogType;
@@ -31,6 +32,7 @@ public class ProtectServer {
 
             // Add Context Handler.
             this.serverIO.createContext("/", new ProtectContext());
+            this.serverIO.createContext("/info", new InfoRoute());
 
             // Create Default Executor.
             this.serverIO.setExecutor(Executors.newCachedThreadPool());

@@ -51,12 +51,21 @@
             <artifactId>ffmpeg-platform</artifactId>
             <version>5.0-1.5.7</version>
         </dependency>
-        <!-- OpenSV for Smart Detections -->
+        <!-- OpenCV for AI Recognition -->
         <dependency>
-            <groupId>org.openpnp</groupId>
-            <artifactId>opencv</artifactId>
-            <version>4.5.1-2</version>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>opencv-platform-gpu</artifactId>
+            <version>4.5.5-1.5.7</version>
+        </dependency>
+        <!-- Optional GPL builds with (almost) everything enabled -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>ffmpeg-platform-gpl</artifactId>
+            <version>5.0-1.5.7</version>
         </dependency>
     </dependencies>
 
+    <!--<build>
+        <sourceDirectory>.</sourceDirectory>
+    </build>-->
 </project>

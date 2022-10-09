@@ -20,7 +20,7 @@ public class CamProvider implements CamProviderInterface {
     private String hostIO = "192.168.1.110";
 
     // Store IP Address of Camera.
-    private String ipIO = "192.168.1.20";
+    private String ipIO = "192.168.1.7";
 
     // Store Connection Port (TLS).
     private int portIO = 7442;
@@ -136,7 +136,6 @@ public class CamProvider implements CamProviderInterface {
 
         // Increment ID.
         this.generateID();
-        System.out.println(paketIO.toString());
 
         // Write Paket to UniFi Protect.
         this.websocketIO.sendText(paketIO.toString());
@@ -148,5 +147,9 @@ public class CamProvider implements CamProviderInterface {
 
     public void setWebsocket(WebSocket websocketIO) {
         this.websocketIO = websocketIO;
+    }
+
+    public void setFirmware(String versionIO) {
+        this.firmwareIO = versionIO;
     }
 }

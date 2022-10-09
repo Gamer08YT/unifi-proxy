@@ -1,5 +1,30 @@
 # UniFi Proxy
 
+### How it works as a diagram
+
+#### Protect (Cam)
+Connection between Camera and Proxy are RTSP or a custom Cam Provider.
+
+```mermaid
+graph LR;
+CAM(RTSP) --> JAR(Proxy)
+JAR --> CAM
+JAR --> PROTECT[(Protect)]
+PROTECT --> JAR
+```
+
+#### Protect (Smart Device)
+Connection between Smart Device (Light...) and Proxy are WS or a custom Smart Device Provider.
+
+```mermaid
+graph LR;
+LIGHT(WS) --> JAR(Proxy)
+JAR --> LIGHT
+JAR --> PROTECT[(Protect)]
+PROTECT --> JAR
+```
+
+
 UniFi Proxy makes it possible to integrate third-party hardware into UniFi Protect.
 
 For testing purposes only, it is recommended to purchase hardware directly from the manufacturer and not to tamper with

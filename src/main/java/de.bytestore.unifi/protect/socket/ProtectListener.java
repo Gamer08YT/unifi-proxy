@@ -6,10 +6,9 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
-import de.bytestore.unifi.protect.paket.AdoptionPaket;
-import de.bytestore.unifi.protect.paket.AuthPaket;
-import de.bytestore.unifi.protect.paket.NetworkPaket;
-import de.bytestore.unifi.protect.paket.ParamAgreementPaket;
+import de.bytestore.unifi.UniFi;
+import de.bytestore.unifi.protect.ProtectSnapshot;
+import de.bytestore.unifi.protect.paket.*;
 import de.bytestore.unifi.provider.CamProvider;
 import de.bytestore.unifi.utils.LogHandler;
 import de.bytestore.unifi.utils.LogType;
@@ -75,6 +74,17 @@ public class ProtectListener extends WebSocketAdapter {
             // Get Payload from Paket.
             JsonObject payloadIO = objectIO.get("payload").getAsJsonObject();
 
+            if (functionIO != null) {
+                if (UniFi.camIO != null) {
+                    LogHandler.print(LogType.INFO, "UniFi Controller requested Snapshot.");
+                    ProtectSnapshot.sendSnapshot((payloadIO.has("uri") ? payloadIO.get("uri").getAsString() : "localhost"));
+                } else
+                    LogHandler.print(LogType.WARNING, "RTSP Cam Instance not connected jet, cant send Snapshot.");
+            }
+
+            // Print Debug Message.
+            LogHandler.print(LogType.SERVER, "Function Handler for '" + functionIO + "' requested.");
+
             // Switch for Function Names.
             switch (functionIO) {
                 case "ubnt_avclient_hello":
@@ -95,7 +105,20 @@ public class ProtectListener extends WebSocketAdapter {
                     this.providerIO.sendPayload(new NetworkPaket(2, this.providerIO), messageIO);
                     break;
                 case "ChangeVideoSettings":
+                    System.out.println(payloadIO);
                     this.providerIO.sendPayload("ChangeVideoSettings", payloadIO, messageIO);
+                    break;
+                case "ChangeDeviceSettings":
+                    this.providerIO.sendPayload(new DeviceSettings(), messageIO);
+                    break;
+                case "UpdateFirmwareRequest":
+                    new UpdateFirmwarePaket(payloadIO, providerIO);
+                    break;
+                case "GetSystemStats":
+                    this.providerIO.sendPayload(new SystemStatsPaket(providerIO), messageIO);
+                    break;
+                case "GetRequest":
+
                     break;
                 default:
                     LogHandler.print(LogType.SERVER, "Function Handler for '" + functionIO + "' is not implemented.");
